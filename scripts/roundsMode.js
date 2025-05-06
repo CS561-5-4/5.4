@@ -235,6 +235,27 @@ if (GlobalUserData.rounds.length == 1) {
   GlobalRoundsTableCaption.textContent = "Table displaying " + GlobalUserData.rounds.length + " speedgolf rounds";
 }
 }
+let pendingDeleteRoundNum = null;
+
+function confirmDelete(roundNum) {
+  pendingDeleteRoundNum = roundNum;
+  new bootstrap.Modal(document.getElementById("confirmDeleteModal")).show();
+}
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+  if (pendingDeleteRoundNum === null) return;
+  deleteRound(pendingDeleteRoundNum);
+  bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal")).hide();
+  pendingDeleteRoundNum = null;
+});
+
+function deleteRound(roundNum) {
+  GlobalUserData.rounds = GlobalUserData.rounds.filter(r => r.roundNum !== roundNum);
+  localStorage.setItem("rounds", JSON.stringify(GlobalUserData.rounds));
+  document.querySelector("#roundsTable tbody").innerHTML = "";
+  populateRoundsTable();
+}
+
 
 /*************************************************************************
 * @function editRound 
